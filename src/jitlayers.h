@@ -19,9 +19,6 @@
 
 using namespace llvm;
 
-extern "C" {
-    extern int globalUnique;
-}
 extern TargetMachine *jl_TargetMachine;
 extern bool imaging_mode;
 
