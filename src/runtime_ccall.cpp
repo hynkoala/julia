@@ -3,7 +3,6 @@
 #include "llvm-version.h"
 #include <map>
 #include <string>
-#include <cstdio>
 #include <llvm/ADT/StringMap.h>
 #include <llvm/Support/Host.h>
 #include <llvm/Support/raw_ostream.h>

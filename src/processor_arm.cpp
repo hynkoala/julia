@@ -6,7 +6,6 @@
 #include <sys/utsname.h>
 #include <fcntl.h>
 #include <set>
-#include <sstream>
 #include <fstream>
 #include <algorithm>
 
