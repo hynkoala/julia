@@ -190,7 +190,7 @@ lock_mi_inference(ni::NativeInterpreter, mi::MethodInstance) = (mi.inInference =
 unlock_mi_inference(ni::NativeInterpreter, mi::MethodInstance) = (mi.inInference = false; nothing)
 
 """
-Emit an annotation when inference widens a result. These annotations are ignored
+Emit an analysis remark during inference for the current line (`sv.pc`). These annotations are ignored
 by the native interpreter, but can be used by external tooling to annotate
 inference results.
 """

@@ -39,13 +39,13 @@ function abstract_call_gf_by_type(interp::AbstractInterpreter, @nospecialize(f),
     ft = unwrap_unionall(atype_params[1]) # TODO: ccall jl_method_table_for here
     if !isa(ft, DataType)
         # can't properly handle this backedge right now
-        add_remark!(interp, sv, "the function being called is unknown")
+        add_remark!(interp, sv, "Could not identify method table for call")
         return Any
     end
     ftname = ft.name
     if !isdefined(ftname, :mt)
         # should be Bottom, but can't track this backedge right now
-        add_remark!(interp, sv, "The function is not callable")
+        add_remark!(interp, sv, "Dispatch on this function type value is currently disallowed")
         return Any # not callable.
     end
     if ftname === _TYPE_NAME
@@ -162,7 +162,7 @@ function abstract_call_gf_by_type(interp::AbstractInterpreter, @nospecialize(f),
         end
     end
     if is_unused && !(rettype === Bottom)
-        add_remark!(interp, sv, "Call result was widened, because the return type is unused")
+        add_remark!(interp, sv, "Call result type was widened because the return value is unused")
         # We're mainly only here because the optimizer might want this code,
         # but we ourselves locally don't typically care about it locally
         # (beyond checking if it always throws).
@@ -626,7 +626,7 @@ function abstract_apply(interp::AbstractInterpreter, @nospecialize(itft), @nospe
     aftw = widenconst(aft)
     if !isa(aft, Const) && (!isType(aftw) || has_free_typevars(aftw))
         if !isconcretetype(aftw) || (aftw <: Builtin)
-            add_remark!(interp, sv, "non-constant function of unknown type")
+            add_remark!(interp, sv, "Core._apply called on a function of a non-concrete type")
             # bail now, since it seems unlikely that abstract_call will be able to do any better after splitting
             # this also ensures we don't call abstract_call_gf_by_type below on an IntrinsicFunction or Builtin
             return Any
@@ -951,7 +951,7 @@ function abstract_call(interp::AbstractInterpreter, fargs::Union{Nothing,Vector{
         # non-constant function, but the number of arguments is known
         # and the ft is not a Builtin or IntrinsicFunction
         if typeintersect(widenconst(ft), Builtin) != Union{}
-            add_remark!(interp, sv, "The called function was unknown")
+            add_remark!(interp, sv, "Could not identify method table for call")
             return Any
         end
         return abstract_call_gf_by_type(interp, nothing, argtypes, argtypes_to_type(argtypes), sv, max_methods)
